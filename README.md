@@ -13,8 +13,7 @@ Chaque dossier langage est autonome : ses propres dépendances, ses propres test
 ```
 .
 ├── python/          ← exemples Python (chapitres 2, 8–12, 14–17)
-├── java/            ← exemples Java   (chapitres 9, 14–16)
-└── generate_bib.py  ← génération automatique de references.bib (LaTeX)
+└── java/            ← exemples Java   (chapitres 9, 14–16)
 ```
 
 Ajouter un nouveau langage ? Créer un dossier `typescript/`, `kotlin/`, `rust/`…  
