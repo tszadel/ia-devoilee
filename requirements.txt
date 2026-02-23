@@ -1,0 +1,44 @@
+# =============================================================================
+# requirements.txt — L'IA dévoilée : code de référence
+# =============================================================================
+
+# --- Fondamentaux ---
+numpy>=1.26
+torch>=2.2
+transformers>=4.40
+tokenizers>=0.19
+tiktoken>=0.7
+datasets>=2.19
+
+# --- Embeddings & RAG ---
+sentence-transformers>=3.0
+chromadb>=0.5
+faiss-cpu>=1.8          # remplacer par faiss-gpu si GPU disponible
+
+# --- LLM APIs ---
+openai>=1.30
+anthropic>=0.28
+
+# --- Fine-tuning ---
+trl>=0.9
+peft>=0.11
+bitsandbytes>=0.43      # quantification QLoRA
+
+# --- Évaluation ---
+evaluate>=0.4
+rouge-score>=0.1
+bert-score>=0.3
+
+# --- Observabilité ---
+opentelemetry-api>=1.24
+opentelemetry-sdk>=1.24
+opentelemetry-exporter-otlp>=1.24
+pyyaml>=6.0
+
+# --- Agents ---
+langgraph>=0.1
+
+# --- Utilitaires ---
+python-dotenv>=1.0
+dataclasses-json>=0.6
+aiohttp>=3.9
