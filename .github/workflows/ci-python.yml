@@ -1,0 +1,62 @@
+name: Python CI
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'python/**'
+      - '.github/workflows/ci-python.yml'
+  pull_request:
+    paths:
+      - 'python/**'
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        working-directory: python
+        run: |
+          pip install --upgrade pip
+          pip install ruff pytest
+          pip install tiktoken numpy
+          pip install torch --index-url https://download.pytorch.org/whl/cpu
+          pip install transformers sentence-transformers chromadb
+
+      - name: Lint (ruff)
+        working-directory: python
+        run: ruff check .
+
+      - name: Test (sans API key)
+        working-directory: python
+        run: pytest tests/test_imports.py -v
+
+  api-tests:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    needs: lint-and-test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install
+        working-directory: python
+        run: pip install openai anthropic
+      - name: Run API smoke tests
+        working-directory: python
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: pytest tests/test_api.py -v -m api

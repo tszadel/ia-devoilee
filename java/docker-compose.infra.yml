@@ -1,0 +1,61 @@
+services:
+
+  # pgvector — PostgreSQL avec extension vector (Spring AI ch14)
+  pgvector:
+    image: pgvector/pgvector:pg16
+    container_name: ia-pgvector
+    environment:
+      POSTGRES_DB:       ia_devoilee
+      POSTGRES_USER:     ia
+      POSTGRES_PASSWORD: ia
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgvector_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ia -d ia_devoilee"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Weaviate — vector store LangChain4j (ch09)
+  weaviate:
+    image: semitechnologies/weaviate:1.25.3
+    container_name: ia-weaviate
+    ports:
+      - "8080:8080"
+      - "50051:50051"
+    environment:
+      QUERY_DEFAULTS_LIMIT: 25
+      AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED: "true"
+      PERSISTENCE_DATA_PATH: /var/lib/weaviate
+      DEFAULT_VECTORIZER_MODULE: none
+      ENABLE_MODULES: ""
+      CLUSTER_HOSTNAME: node1
+    volumes:
+      - weaviate_data:/var/lib/weaviate
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8080/v1/.well-known/ready"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # Jaeger — visualisation des traces OTel (ch16)
+  jaeger:
+    image: jaegertracing/all-in-one:1.58
+    container_name: ia-jaeger
+    ports:
+      - "16686:16686"    # UI Jaeger
+      - "4317:4317"      # OTLP gRPC (OpenTelemetry)
+      - "4318:4318"      # OTLP HTTP
+    environment:
+      COLLECTOR_OTLP_ENABLED: "true"
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:16686"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pgvector_data:
+  weaviate_data:

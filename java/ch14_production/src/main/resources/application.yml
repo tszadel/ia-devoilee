@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: ia-devoilee-ch14
+
+  # LLM : changer le provider sans toucher au code Java
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY:}
+      chat:
+        options:
+          model: gpt-4o-mini
+          temperature: 0.2
+
+  # pgvector : PostgreSQL avec extension vector
+  datasource:
+    url: jdbc:postgresql://localhost:5432/ia_devoilee
+    username: ia
+    password: ia
+    driver-class-name: org.postgresql.Driver
+
+server:
+  port: 8080
+
+logging:
+  level:
+    dev.langchain4j: INFO
+    org.springframework.ai: INFO
